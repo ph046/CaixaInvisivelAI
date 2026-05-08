@@ -32,9 +32,7 @@ jobs:
 
           mkdir -p app/src/main/java/com/pedro/caixainvisivel
           mkdir -p app/src/main/res/drawable
-          mkdir -p app/src/main/res/mipmap-hdpi
           mkdir -p app/src/main/res/values
-          mkdir -p .github/workflows
 
           cat > settings.gradle <<'EOF'
           pluginManagement {
@@ -813,50 +811,6 @@ jobs:
                   ).toInt()
               }
           }
-          EOF
-
-          cat > .github/workflows/build-apk.yml <<'EOF'
-          name: Build APK
-
-          on:
-            workflow_dispatch:
-            push:
-              branches: [ main ]
-
-          jobs:
-            build:
-              runs-on: ubuntu-latest
-
-              steps:
-                - name: Baixar código
-                  uses: actions/checkout@v4
-
-                - name: Configurar Java
-                  uses: actions/setup-java@v4
-                  with:
-                    distribution: temurin
-                    java-version: '17'
-
-                - name: Configurar Gradle
-                  uses: gradle/actions/setup-gradle@v3
-                  with:
-                    gradle-version: 8.10.2
-                    cache-disabled: true
-
-                - name: Aceitar licenças Android
-                  run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-
-                - name: Instalar SDK Android
-                  run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
-
-                - name: Gerar APK debug
-                  run: gradle assembleDebug --no-daemon --stacktrace
-
-                - name: Enviar APK
-                  uses: actions/upload-artifact@v4
-                  with:
-                    name: caixa-invisivel-debug-apk
-                    path: app/build/outputs/apk/debug/app-debug.apk
           EOF
 
       - name: Fazer commit dos arquivos
