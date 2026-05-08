@@ -33,6 +33,7 @@ jobs:
           mkdir -p app/src/main/java/com/pedro/caixainvisivel
           mkdir -p app/src/main/res/drawable
           mkdir -p app/src/main/res/mipmap-hdpi
+          mkdir -p app/src/main/res/values
           mkdir -p .github/workflows
 
           cat > settings.gradle <<'EOF'
@@ -86,6 +87,15 @@ jobs:
                   versionCode 1
                   versionName '1.0'
               }
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = '17'
+              }
           }
           EOF
 
@@ -115,8 +125,6 @@ jobs:
 
           </manifest>
           EOF
-
-          mkdir -p app/src/main/res/values
 
           cat > app/src/main/res/values/styles.xml <<'EOF'
           <resources>
@@ -851,6 +859,14 @@ jobs:
                     path: app/build/outputs/apk/debug/app-debug.apk
           EOF
 
+      - name: Fazer commit dos arquivos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Criar app Caixa Invisivel AI" || echo "Nada para commitar"
+          git push
+
       - name: Instalar SDK Android
         run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
@@ -862,11 +878,3 @@ jobs:
         with:
           name: caixa-invisivel-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Fazer commit dos arquivos
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Criar app Caixa Invisivel AI" || echo "Nada para commitar"
-          git push
